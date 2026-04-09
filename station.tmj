@@ -7739,6 +7739,205 @@
      "width": 224,
      "x": 1312,
      "y": 448
+    },
+    {
+     "height": 384,
+     "id": 6,
+     "name": "Room Video",
+     "class": "area",
+     "properties": [
+      {
+       "name": "openWebsite",
+       "type": "string",
+       "value": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      },
+      {
+       "name": "openWebsiteWidth",
+       "type": "int",
+       "value": 50
+      },
+      {
+       "name": "openWebsiteTrigger",
+       "type": "string",
+       "value": "onaction"
+      },
+      {
+       "name": "openWebsitePolicy",
+       "type": "string",
+       "value": "fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      }
+     ],
+     "rotation": 0,
+     "type": "",
+     "visible": true,
+     "width": 224,
+     "x": 64,
+     "y": 480
+    },
+    {
+     "height": 384,
+     "id": 7,
+     "name": "Cafe Video",
+     "class": "area",
+     "properties": [
+      {
+       "name": "openWebsite",
+       "type": "string",
+       "value": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      },
+      {
+       "name": "openWebsiteWidth",
+       "type": "int",
+       "value": 50
+      },
+      {
+       "name": "openWebsiteTrigger",
+       "type": "string",
+       "value": "onaction"
+      },
+      {
+       "name": "openWebsitePolicy",
+       "type": "string",
+       "value": "fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      }
+     ],
+     "rotation": 0,
+     "type": "",
+     "visible": true,
+     "width": 256,
+     "x": 352,
+     "y": 480
+    },
+    {
+     "height": 384,
+     "id": 8,
+     "name": "Bar Video",
+     "class": "area",
+     "properties": [
+      {
+       "name": "openWebsite",
+       "type": "string",
+       "value": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      },
+      {
+       "name": "openWebsiteWidth",
+       "type": "int",
+       "value": 50
+      },
+      {
+       "name": "openWebsiteTrigger",
+       "type": "string",
+       "value": "onaction"
+      },
+      {
+       "name": "openWebsitePolicy",
+       "type": "string",
+       "value": "fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      }
+     ],
+     "rotation": 0,
+     "type": "",
+     "visible": true,
+     "width": 256,
+     "x": 672,
+     "y": 480
+    },
+    {
+     "height": 384,
+     "id": 9,
+     "name": "Lounge Video",
+     "class": "area",
+     "properties": [
+      {
+       "name": "openWebsite",
+       "type": "string",
+       "value": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      },
+      {
+       "name": "openWebsiteWidth",
+       "type": "int",
+       "value": 50
+      },
+      {
+       "name": "openWebsiteTrigger",
+       "type": "string",
+       "value": "onaction"
+      },
+      {
+       "name": "openWebsitePolicy",
+       "type": "string",
+       "value": "fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      }
+     ],
+     "rotation": 0,
+     "type": "",
+     "visible": true,
+     "width": 256,
+     "x": 992,
+     "y": 480
+    },
+    {
+     "height": 384,
+     "id": 10,
+     "name": "Space Video",
+     "class": "area",
+     "properties": [
+      {
+       "name": "openWebsite",
+       "type": "string",
+       "value": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      },
+      {
+       "name": "openWebsiteWidth",
+       "type": "int",
+       "value": 50
+      },
+      {
+       "name": "openWebsiteTrigger",
+       "type": "string",
+       "value": "onaction"
+      },
+      {
+       "name": "openWebsitePolicy",
+       "type": "string",
+       "value": "fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      }
+     ],
+     "rotation": 0,
+     "type": "",
+     "visible": true,
+     "width": 224,
+     "x": 1312,
+     "y": 480
+    },
+    {
+     "height": 192,
+     "id": 11,
+     "name": "Discord Chat",
+     "class": "area",
+     "properties": [
+      {
+       "name": "openWebsite",
+       "type": "string",
+       "value": "https://discord.com/widget?id=YOUR_SERVER_ID&theme=dark"
+      },
+      {
+       "name": "openWebsiteWidth",
+       "type": "int",
+       "value": 40
+      },
+      {
+       "name": "openWebsiteTrigger",
+       "type": "string",
+       "value": "onaction"
+      }
+     ],
+     "rotation": 0,
+     "type": "",
+     "visible": true,
+     "width": 640,
+     "x": 480,
+     "y": 128
     }
    ],
    "opacity": 1,
@@ -9273,7 +9472,7 @@
   }
  ],
  "nextlayerid": 50,
- "nextobjectid": 6,
+ "nextobjectid": 12,
  "orientation": "orthogonal",
  "renderorder": "right-down",
  "tiledversion": "1.11.0",
