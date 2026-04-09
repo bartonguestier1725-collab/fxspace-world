@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASTRO BOARD — FX SPACE</title>
+<style>
+/* ======================================================
+   ASTRO BOARD — UI プロトタイプ v1.0
+   FX SPACE / よすが
+   ======================================================
+   【このファイルについて】
+   - これはデザイン確認用の静的プロトタイプです
+   - データはすべてハードコードされています
+   - 本実装時はAPIから取得してカードをレンダリングしてください
+   ====================================================== */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif;
+
+  /* ランクカラー */
+  --c-voyager: #c8d4ff;
+  --c-neptune: #32d2a0;
+  --c-pioneer: #9070ff;
+  --c-uranus:  #4e96e0;
+  --c-saturn:  #c09630;
+  --c-jupiter: #a07828;
+  --c-mars:    #c04845;
+  --c-karman:  #7a8499;
+}
+
+body {
+  background: #04070f;
+  font-family: var(--font);
+  color: #dde2f4;
+  min-height: 100vh;
+}
+
+/* ── Stars background ── */
+.stars-bg {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0; overflow: hidden;
+}
+.star {
+  position: absolute; border-radius: 50%; background: #fff;
+  animation: twinkle 3s ease-in-out infinite alternate;
+}
+@keyframes twinkle { from { opacity: 0.1; } to { opacity: 0.7; } }
+
+/* ── Page layout ── */
+.page {
+  position: relative; z-index: 1;
+  max-width: 1100px; margin: 0 auto;
+  padding: 36px 24px 60px;
+}
+
+.page-title {
+  text-align: center; font-size: 10px;
+  letter-spacing: 5px; color: #3a4258;
+  text-transform: uppercase; margin-bottom: 4px;
+}
+.page-heading {
+  text-align: center; font-size: 32px; font-weight: 500;
+  color: #d8ddf0; margin-bottom: 8px; letter-spacing: 3px;
+}
+.page-sub {
+  text-align: center; font-size: 11px; color: #2e3650;
+  margin-bottom: 40px; letter-spacing: 1px;
+}
+
+/* ── Section ── */
+.rank-section { margin-bottom: 44px; }
+
+.rank-section-header {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+}
+.rank-section-line { flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
+.rank-section-label {
+  font-size: 10px; letter-spacing: 3px;
+  text-transform: uppercase; font-weight: 500; white-space: nowrap;
+}
+
+/* ── Grid sizes ── */
+.cards-grid { display: grid; gap: 14px; }
+.grid-1 { grid-template-columns: 1fr; max-width: 620px; margin: 0 auto; }
+.grid-2 { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
+.grid-3 { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.grid-4 { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+
+/* ── Base card ── */
+.card {
+  border-radius: 16px;
+  padding: 20px 20px 18px;
+  position: relative; overflow: hidden;
+  cursor: default;
+  transition: transform 0.2s ease;
+}
+.card:hover { transform: translateY(-4px); }
+
+/* top accent line */
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+}
+
+/* ── Voyager ── platinum + shimmer + nebula */
+.card-voyager {
+  border-radius: 18px;
+  padding: 26px 26px 22px;
+  background: #0c1525;
+  border: 1px solid rgba(210,220,255,0.35);
+  box-shadow: 0 0 60px rgba(160,180,255,0.1), 0 0 0 1px rgba(210,220,255,0.1);
+}
+.card-voyager::before {
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #a8b8ff 25%, #fff 50%, #c0d0ff 75%, transparent 100%);
+}
+.card-voyager .shimmer {
+  position: absolute; top: 0; left: -120%; width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  animation: sweep 5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes sweep { 0%{left:-120%} 100%{left:220%} }
+.card-voyager .nebula {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(120,140,255,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, rgba(80,200,160,0.05) 0%, transparent 60%);
+}
+
+/* ── Neptune ── aurora teal */
+.card-neptune {
+  background: #080f1e;
+  border: 1px solid rgba(50,210,160,0.28);
+  box-shadow: 0 0 30px rgba(40,180,140,0.07);
+}
+.card-neptune::before {
+  background: linear-gradient(90deg, transparent, #32d2a0, #7060ff, transparent);
+  height: 2px;
+}
+
+/* ── Pioneer ── deep violet */
+.card-pioneer {
+  background: #090a1c;
+  border: 1px solid rgba(110,80,255,0.28);
+  box-shadow: 0 0 24px rgba(90,60,220,0.06);
+}
+.card-pioneer::before {
+  background: linear-gradient(90deg, transparent, #6e50ff, #b080ff, transparent);
+  height: 2px;
+}
+
+/* ── Uranus ── ice blue */
+.card-uranus {
+  background: #070e1a;
+  border: 1px solid rgba(50,120,220,0.22);
+}
+.card-uranus::before {
+  background: linear-gradient(90deg, transparent, #3278dc, transparent);
+}
+
+/* ── Saturn ── warm gold */
+.card-saturn {
+  background: #090a10;
+  border: 1px solid rgba(190,150,50,0.22);
+}
+.card-saturn::before {
+  background: linear-gradient(90deg, transparent, #c09630, transparent);
+}
+
+/* ── Jupiter ── amber */
+.card-jupiter {
+  background: #090808;
+  border: 1px solid rgba(140,100,30,0.18);
+}
+.card-jupiter::before {
+  background: linear-gradient(90deg, transparent, #8c641e, transparent);
+}
+
+/* ── Mars ── crimson */
+.card-mars {
+  background: #0a0608;
+  border: 1px solid rgba(160,50,45,0.18);
+}
+.card-mars::before {
+  background: linear-gradient(90deg, transparent, #a0322d, transparent);
+}
+
+/* ── Karman ── slate */
+.card-karman {
+  background: #080a0d;
+  border: 1px solid rgba(70,80,105,0.18);
+}
+
+/* ── Rank badge ── */
+.rank-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  padding: 3px 10px 3px 8px; border-radius: 20px;
+  margin-bottom: 16px; font-weight: 500;
+}
+.badge-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+
+.badge-voyager { background: rgba(200,215,255,0.1);  color: #c8d4ff; border: 1px solid rgba(200,215,255,0.28); }
+.badge-voyager .badge-dot { background: #c8d4ff; box-shadow: 0 0 6px #a0b4ff; }
+.badge-neptune { background: rgba(50,210,160,0.09);  color: #32d2a0; border: 1px solid rgba(50,210,160,0.24); }
+.badge-neptune .badge-dot { background: #32d2a0; }
+.badge-pioneer { background: rgba(110,80,255,0.1);   color: #9070ff; border: 1px solid rgba(110,80,255,0.28); }
+.badge-pioneer .badge-dot { background: #9070ff; }
+.badge-uranus  { background: rgba(50,120,220,0.09);  color: #4e96e0; border: 1px solid rgba(50,120,220,0.22); }
+.badge-uranus  .badge-dot { background: #4e96e0; }
+.badge-saturn  { background: rgba(190,150,50,0.09);  color: #c09630; border: 1px solid rgba(190,150,50,0.22); }
+.badge-saturn  .badge-dot { background: #c09630; }
+.badge-jupiter { background: rgba(140,100,30,0.09);  color: #a07828; border: 1px solid rgba(140,100,30,0.18); }
+.badge-jupiter .badge-dot { background: #a07828; }
+.badge-mars    { background: rgba(160,50,45,0.09);   color: #c04845; border: 1px solid rgba(160,50,45,0.18); }
+.badge-mars    .badge-dot { background: #c04845; }
+.badge-karman  { background: rgba(70,80,105,0.12);   color: #7a8499; border: 1px solid rgba(70,80,105,0.2); }
+.badge-karman  .badge-dot { background: #7a8499; }
+
+/* ── Avatar ── */
+.avatar {
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 500; flex-shrink: 0;
+}
+.av-lg { width: 56px; height: 56px; font-size: 18px; }
+.av-md { width: 48px; height: 48px; font-size: 15px; }
+.av-sm { width: 40px; height: 40px; font-size: 13px; }
+
+.av-voyager { background: rgba(200,215,255,0.12); color: #c8d4ff; border: 1px solid rgba(200,215,255,0.3); box-shadow: 0 0 16px rgba(180,200,255,0.12); }
+.av-neptune { background: rgba(50,210,160,0.1);   color: #32d2a0; border: 1px solid rgba(50,210,160,0.28); }
+.av-pioneer { background: rgba(110,80,255,0.1);   color: #9070ff; border: 1px solid rgba(110,80,255,0.28); }
+.av-uranus  { background: rgba(50,120,220,0.09);  color: #4e96e0; border: 1px solid rgba(50,120,220,0.22); }
+.av-saturn  { background: rgba(190,150,50,0.09);  color: #c09630; border: 1px solid rgba(190,150,50,0.2); }
+.av-jupiter { background: rgba(140,100,30,0.09);  color: #a07828; border: 1px solid rgba(140,100,30,0.16); }
+.av-mars    { background: rgba(160,50,45,0.09);   color: #c04845; border: 1px solid rgba(160,50,45,0.16); }
+.av-karman  { background: rgba(70,80,105,0.1);    color: #7a8499; border: 1px solid rgba(70,80,105,0.18); }
+
+/* ── Card header ── */
+.card-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.card-header-info { flex: 1; min-width: 0; }
+.trader-name { font-size: 17px; font-weight: 500; color: #dde2f4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.trader-name-lg { font-size: 20px; }
+.trader-name-sm { font-size: 14px; }
+.trader-meta { font-size: 11px; color: #3d4860; margin-top: 3px; }
+
+/* ── Achievement badges ── */
+.achievements-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+.ach {
+  font-size: 10px; padding: 3px 9px; border-radius: 4px; border: 1px solid;
+}
+.ach-platinum { background: rgba(200,215,255,0.07); color: #a0b0e0; border-color: rgba(200,215,255,0.2); }
+.ach-gold     { background: rgba(200,160,50,0.07);  color: #a08030; border-color: rgba(200,160,50,0.18); }
+
+/* ── Stats ── */
+.big-stat-row {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;
+}
+.big-stat {
+  background: rgba(255,255,255,0.03); border-radius: 10px;
+  padding: 14px 10px; text-align: center;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.big-stat-val { font-size: 24px; font-weight: 500; }
+.big-stat-lbl { font-size: 9px; color: #3a4460; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; }
+
+.stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 7px; margin-bottom: 12px;
+}
+.stat-box {
+  background: rgba(255,255,255,0.03); border-radius: 8px;
+  padding: 8px 4px; text-align: center;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.stat-val    { font-size: 14px; font-weight: 500; }
+.stat-val-sm { font-size: 13px; font-weight: 500; }
+.stat-lbl { font-size: 9px; color: #3d4860; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+/* ── Tags ── */
+.tags-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+.tag {
+  font-size: 10px; padding: 3px 8px; border-radius: 20px;
+  background: rgba(255,255,255,0.04); color: #4e5870;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* ── Quote ── */
+.quote {
+  font-size: 11px; color: #3a4460; font-style: italic;
+  border-left: 2px solid rgba(255,255,255,0.08);
+  padding: 6px 10px; margin-bottom: 12px; line-height: 1.6;
+}
+
+/* ── Mentor bar ── */
+.mentor-bar {
+  display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap;
+  padding: 9px 10px; border-radius: 8px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.mentor-key { font-size: 9px; color: #303848; text-transform: uppercase; letter-spacing: 1.5px; flex-shrink: 0; padding-top: 3px; }
+.mentor-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.mentor-chip {
+  font-size: 10px; padding: 2px 8px; border-radius: 10px;
+  background: rgba(255,255,255,0.04); color: #5a6480;
+  border: 1px solid rgba(255,255,255,0.07);
+}
+
+/* ── Rank label colors ── */
+.lc-voyager { color: #b0c0f0; }
+.lc-neptune { color: #32d2a0; }
+.lc-pioneer { color: #8060e0; }
+.lc-uranus  { color: #4e96e0; }
+.lc-saturn  { color: #c09630; }
+.lc-jupiter { color: #a07828; }
+.lc-mars    { color: #c04845; }
+.lc-karman  { color: #6a7490; }
+</style>
+</head>
+<body>
+
+<div class="stars-bg" id="stars"></div>
+
+<div class="page">
+  <p class="page-title">FX SPACE</p>
+  <h1 class="page-heading">ASTRO BOARD</h1>
+  <p class="page-sub">プロトレーダーの実績と軌跡</p>
+
+  <!-- ═══════════════ VOYAGER ═══════════════ -->
+  <section class="rank-section">
+    <div class="rank-section-header">
+      <div class="rank-section-line"></div>
+      <span class="rank-section-label lc-voyager">✦ Voyager &nbsp;—&nbsp; 総利益 1億円超</span>
+      <div class="rank-section-line"></div>
+    </div>
+    <div class="cards-grid grid-1">
+
+      <!-- CARD: Voyager -->
+      <div class="card card-voyager">
+        <div class="shimmer"></div>
+        <div class="nebula"></div>
+        <span class="rank-badge badge-voyager"><span class="badge-dot"></span>Voyager</span>
+        <div class="card-header">
+          <div class="avatar av-lg av-voyager">RK</div>
+          <div class="card-header-info">
+            <div class="trader-name trader-name-lg">リョウ・カワサキ</div>
+            <div class="trader-meta">@ryo_trades &nbsp;·&nbsp; FX歴 9年 &nbsp;·&nbsp; 東京</div>
+          </div>
+        </div>
+        <div class="achievements-row">
+          <span class="ach ach-platinum">総利益 ¥1.8億</span>
+          <span class="ach ach-platinum">技術分析士</span>
+          <span class="ach ach-platinum">著書あり</span>
+          <span class="ach ach-gold">実況MVP ×12</span>
+          <span class="ach ach-gold">殿堂メンター</span>
+        </div>
+        <div class="big-stat-row">
+          <div class="big-stat">
+            <div class="big-stat-val" style="color:#c8d4ff">+44%</div>
+            <div class="big-stat-lbl">月利 avg</div>
+          </div>
+          <div class="big-stat">
+            <div class="big-stat-val" style="color:#c8d4ff">78%</div>
+            <div class="big-stat-lbl">勝率</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val" style="color:#c8d4ff">5.2</div><div class="stat-lbl">PF</div></div>
+          <div class="stat-box"><div class="stat-val" style="color:#c8d4ff">6.8%</div><div class="stat-lbl">最大DD</div></div>
+          <div class="stat-box"><div class="stat-val" style="color:#c8d4ff">2.0</div><div class="stat-lbl">RRR</div></div>
+        </div>
+        <div class="tags-row">
+          <span class="tag">ドル円</span><span class="tag">ポンド円</span>
+          <span class="tag">Dow理論</span><span class="tag">マルチTF</span><span class="tag">プライスアクション</span>
+        </div>
+        <div class="quote">"相場に正解はない。でも間違いは明確に決められる。"</div>
+        <div class="mentor-bar">
+          <span class="mentor-key">輩出実績</span>
+          <div class="mentor-chips">
+            <span class="mentor-chip">Neptune ×4</span>
+            <span class="mentor-chip">Pioneer ×7</span>
+            <span class="mentor-chip">Saturn ×18</span>
+            <span class="mentor-chip">Jupiter ×30</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════ NEPTUNE ═══════════════ -->
+  <section class="rank-section">
+    <div class="rank-section-header">
+      <div class="rank-section-line"></div>
+      <span class="rank-section-label lc-neptune">▸ Neptune</span>
+      <div class="rank-section-line"></div>
+    </div>
+    <div class="cards-grid grid-2">
+
+      <div class="card card-neptune">
+        <span class="rank-badge badge-neptune"><span class="badge-dot"></span>Neptune</span>
+        <div class="card-header">
+          <div class="avatar av-md av-neptune">TN</div>
+          <div class="card-header-info">
+            <div class="trader-name">たなか そう</div>
+            <div class="trader-meta">FX歴 6年 · Fintokei合格</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val" style="color:#32d2a0">+26%</div><div class="stat-lbl">月利 avg</div></div>
+          <div class="stat-box"><div class="stat-val" style="color:#32d2a0">70%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val" style="color:#32d2a0">3.8</div><div class="stat-lbl">PF</div></div>
+        </div>
+        <div class="tags-row"><span class="tag">ユーロドル</span><span class="tag">スキャル</span><span class="tag">ロンドン時間</span></div>
+        <div class="mentor-bar">
+          <span class="mentor-key">輩出</span>
+          <div class="mentor-chips">
+            <span class="mentor-chip">Pioneer ×2</span><span class="mentor-chip">Saturn ×6</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-neptune">
+        <span class="rank-badge badge-neptune"><span class="badge-dot"></span>Neptune</span>
+        <div class="card-header">
+          <div class="avatar av-md av-neptune">MY</div>
+          <div class="card-header-info">
+            <div class="trader-name">みやもと ゆい</div>
+            <div class="trader-meta">FX歴 5年 · Fundora合格</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val" style="color:#32d2a0">+20%</div><div class="stat-lbl">月利 avg</div></div>
+          <div class="stat-box"><div class="stat-val" style="color:#32d2a0">66%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val" style="color:#32d2a0">3.1</div><div class="stat-lbl">PF</div></div>
+        </div>
+        <div class="tags-row"><span class="tag">ポンドドル</span><span class="tag">スウィング</span><span class="tag">NY時間</span></div>
+        <div class="mentor-bar">
+          <span class="mentor-key">CADET</span>
+          <div class="mentor-chips"><span class="mentor-chip">訓練中 ×3</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════ PIONEER ═══════════════ -->
+  <section class="rank-section">
+    <div class="rank-section-header">
+      <div class="rank-section-line"></div>
+      <span class="rank-section-label lc-pioneer">▸ Pioneer</span>
+      <div class="rank-section-line"></div>
+    </div>
+    <div class="cards-grid grid-2">
+
+      <div class="card card-pioneer">
+        <span class="rank-badge badge-pioneer"><span class="badge-dot"></span>Pioneer</span>
+        <div class="card-header">
+          <div class="avatar av-md av-pioneer">SK</div>
+          <div class="card-header-info">
+            <div class="trader-name">さとう けんじ</div>
+            <div class="trader-meta">FX歴 4年 · 師匠: たなか</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val" style="color:#9070ff">+17%</div><div class="stat-lbl">月利 avg</div></div>
+          <div class="stat-box"><div class="stat-val" style="color:#9070ff">63%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val" style="color:#9070ff">2.8</div><div class="stat-lbl">PF</div></div>
+        </div>
+        <div class="tags-row"><span class="tag">ドル円</span><span class="tag">プライスアクション</span></div>
+        <div class="mentor-bar">
+          <span class="mentor-key">CADET</span>
+          <div class="mentor-chips"><span class="mentor-chip">訓練中 ×2</span></div>
+        </div>
+      </div>
+
+      <div class="card card-pioneer">
+        <span class="rank-badge badge-pioneer"><span class="badge-dot"></span>Pioneer</span>
+        <div class="card-header">
+          <div class="avatar av-md av-pioneer">KH</div>
+          <div class="card-header-info">
+            <div class="trader-name">きむら ひろし</div>
+            <div class="trader-meta">FX歴 3年 · Fintokei合格</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val" style="color:#9070ff">+14%</div><div class="stat-lbl">月利 avg</div></div>
+          <div class="stat-box"><div class="stat-val" style="color:#9070ff">60%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val" style="color:#9070ff">2.5</div><div class="stat-lbl">PF</div></div>
+        </div>
+        <div class="tags-row"><span class="tag">ユーロ円</span><span class="tag">デイトレ</span></div>
+        <div class="mentor-bar">
+          <span class="mentor-key">師匠</span>
+          <div class="mentor-chips"><span class="mentor-chip">みやもと</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════ URANUS ═══════════════ -->
+  <section class="rank-section">
+    <div class="rank-section-header">
+      <div class="rank-section-line"></div>
+      <span class="rank-section-label lc-uranus">▸ Uranus</span>
+      <div class="rank-section-line"></div>
+    </div>
+    <div class="cards-grid grid-3">
+
+      <div class="card card-uranus">
+        <span class="rank-badge badge-uranus"><span class="badge-dot"></span>Uranus</span>
+        <div class="card-header">
+          <div class="avatar av-sm av-uranus">HW</div>
+          <div class="card-header-info">
+            <div class="trader-name">はやし わたる</div>
+            <div class="trader-meta">FX歴 3年</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val-sm" style="color:#4e96e0">+12%</div><div class="stat-lbl">月利</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#4e96e0">58%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#4e96e0">2.2</div><div class="stat-lbl">PF</div></div>
+        </div>
+        <div class="tags-row"><span class="tag">ポンド円</span><span class="tag">短期</span></div>
+      </div>
+
+      <div class="card card-uranus">
+        <span class="rank-badge badge-uranus"><span class="badge-dot"></span>Uranus</span>
+        <div class="card-header">
+          <div class="avatar av-sm av-uranus">NI</div>
+          <div class="card-header-info">
+            <div class="trader-name">にしだ いくこ</div>
+            <div class="trader-meta">FX歴 2年</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val-sm" style="color:#4e96e0">+11%</div><div class="stat-lbl">月利</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#4e96e0">57%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#4e96e0">2.0</div><div class="stat-lbl">PF</div></div>
+        </div>
+        <div class="tags-row"><span class="tag">ドル円</span><span class="tag">Fundora合格</span></div>
+      </div>
+
+      <div class="card card-uranus">
+        <span class="rank-badge badge-uranus"><span class="badge-dot"></span>Uranus</span>
+        <div class="card-header">
+          <div class="avatar av-sm av-uranus">TO</div>
+          <div class="card-header-info">
+            <div class="trader-name">つちや おさむ</div>
+            <div class="trader-meta">FX歴 2年半</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val-sm" style="color:#4e96e0">+10%</div><div class="stat-lbl">月利</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#4e96e0">55%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#4e96e0">1.9</div><div class="stat-lbl">PF</div></div>
+        </div>
+        <div class="tags-row"><span class="tag">ユーロ円</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════ SATURN ═══════════════ -->
+  <section class="rank-section">
+    <div class="rank-section-header">
+      <div class="rank-section-line"></div>
+      <span class="rank-section-label lc-saturn">▸ Saturn</span>
+      <div class="rank-section-line"></div>
+    </div>
+    <div class="cards-grid grid-3">
+
+      <div class="card card-saturn">
+        <span class="rank-badge badge-saturn"><span class="badge-dot"></span>Saturn</span>
+        <div class="card-header">
+          <div class="avatar av-sm av-saturn">TK</div>
+          <div class="card-header-info">
+            <div class="trader-name">たかはし こう</div>
+            <div class="trader-meta">FX歴 2年</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val-sm" style="color:#c09630">+9%</div><div class="stat-lbl">月利</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#c09630">54%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#c09630">1.8</div><div class="stat-lbl">PF</div></div>
+        </div>
+        <div class="tags-row"><span class="tag">ユーロドル</span></div>
+      </div>
+
+      <div class="card card-saturn">
+        <span class="rank-badge badge-saturn"><span class="badge-dot"></span>Saturn</span>
+        <div class="card-header">
+          <div class="avatar av-sm av-saturn">AO</div>
+          <div class="card-header-info">
+            <div class="trader-name">あおき みか</div>
+            <div class="trader-meta">FX歴 1年8ヶ月</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val-sm" style="color:#c09630">+8%</div><div class="stat-lbl">月利</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#c09630">55%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#c09630">1.9</div><div class="stat-lbl">PF</div></div>
+        </div>
+        <div class="tags-row"><span class="tag">スキャル</span></div>
+      </div>
+
+      <div class="card card-saturn">
+        <span class="rank-badge badge-saturn"><span class="badge-dot"></span>Saturn</span>
+        <div class="card-header">
+          <div class="avatar av-sm av-saturn">KM</div>
+          <div class="card-header-info">
+            <div class="trader-name">かわかみ まこと</div>
+            <div class="trader-meta">FX歴 2年4ヶ月</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val-sm" style="color:#c09630">+7%</div><div class="stat-lbl">月利</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#c09630">52%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#c09630">1.7</div><div class="stat-lbl">PF</div></div>
+        </div>
+        <div class="tags-row"><span class="tag">ポンドドル</span><span class="tag">Fintokei合格</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════ JUPITER ═══════════════ -->
+  <section class="rank-section">
+    <div class="rank-section-header">
+      <div class="rank-section-line"></div>
+      <span class="rank-section-label lc-jupiter">▸ Jupiter</span>
+      <div class="rank-section-line"></div>
+    </div>
+    <div class="cards-grid grid-4">
+
+      <div class="card card-jupiter">
+        <span class="rank-badge badge-jupiter"><span class="badge-dot"></span>Jupiter</span>
+        <div class="card-header">
+          <div class="avatar av-sm av-jupiter">SN</div>
+          <div class="card-header-info">
+            <div class="trader-name trader-name-sm">すずき のぞみ</div>
+            <div class="trader-meta">FX歴 1年</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val-sm" style="color:#a07828">+6%</div><div class="stat-lbl">月利</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#a07828">51%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#a07828">1.6</div><div class="stat-lbl">PF</div></div>
+        </div>
+      </div>
+
+      <div class="card card-jupiter">
+        <span class="rank-badge badge-jupiter"><span class="badge-dot"></span>Jupiter</span>
+        <div class="card-header">
+          <div class="avatar av-sm av-jupiter">RW</div>
+          <div class="card-header-info">
+            <div class="trader-name trader-name-sm">わたなべ りょう</div>
+            <div class="trader-meta">FX歴 1年3ヶ月</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val-sm" style="color:#a07828">+5%</div><div class="stat-lbl">月利</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#a07828">50%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#a07828">1.5</div><div class="stat-lbl">PF</div></div>
+        </div>
+      </div>
+
+      <div class="card card-jupiter">
+        <span class="rank-badge badge-jupiter"><span class="badge-dot"></span>Jupiter</span>
+        <div class="card-header">
+          <div class="avatar av-sm av-jupiter">YF</div>
+          <div class="card-header-info">
+            <div class="trader-name trader-name-sm">ふじた ゆき</div>
+            <div class="trader-meta">FX歴 10ヶ月</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val-sm" style="color:#a07828">+5%</div><div class="stat-lbl">月利</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#a07828">50%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#a07828">1.5</div><div class="stat-lbl">PF</div></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════ MARS ═══════════════ -->
+  <section class="rank-section">
+    <div class="rank-section-header">
+      <div class="rank-section-line"></div>
+      <span class="rank-section-label lc-mars">▸ Mars</span>
+      <div class="rank-section-line"></div>
+    </div>
+    <div class="cards-grid grid-4">
+
+      <div class="card card-mars">
+        <span class="rank-badge badge-mars"><span class="badge-dot"></span>Mars</span>
+        <div class="card-header">
+          <div class="avatar av-sm av-mars">II</div>
+          <div class="card-header-info">
+            <div class="trader-name trader-name-sm">いいじま こうき</div>
+            <div class="trader-meta">FX歴 8ヶ月</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val-sm" style="color:#c04845">+4%</div><div class="stat-lbl">月利</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#c04845">49%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#c04845">1.5</div><div class="stat-lbl">PF</div></div>
+        </div>
+      </div>
+
+      <div class="card card-mars">
+        <span class="rank-badge badge-mars"><span class="badge-dot"></span>Mars</span>
+        <div class="card-header">
+          <div class="avatar av-sm av-mars">MT</div>
+          <div class="card-header-info">
+            <div class="trader-name trader-name-sm">もりた だいき</div>
+            <div class="trader-meta">FX歴 6ヶ月</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val-sm" style="color:#c04845">+3%</div><div class="stat-lbl">月利</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#c04845">48%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#c04845">1.5</div><div class="stat-lbl">PF</div></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════ KARMAN ═══════════════ -->
+  <section class="rank-section">
+    <div class="rank-section-header">
+      <div class="rank-section-line"></div>
+      <span class="rank-section-label lc-karman">▸ Karman</span>
+      <div class="rank-section-line"></div>
+    </div>
+    <div class="cards-grid grid-4">
+
+      <div class="card card-karman">
+        <span class="rank-badge badge-karman"><span class="badge-dot"></span>Karman</span>
+        <div class="card-header">
+          <div class="avatar av-sm av-karman">FN</div>
+          <div class="card-header-info">
+            <div class="trader-name trader-name-sm">ふくだ なお</div>
+            <div class="trader-meta">FX歴 5ヶ月</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val-sm" style="color:#7a8499">+3%</div><div class="stat-lbl">月利</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#7a8499">48%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#7a8499">1.4</div><div class="stat-lbl">PF</div></div>
+        </div>
+      </div>
+
+      <div class="card card-karman">
+        <span class="rank-badge badge-karman"><span class="badge-dot"></span>Karman</span>
+        <div class="card-header">
+          <div class="avatar av-sm av-karman">GS</div>
+          <div class="card-header-info">
+            <div class="trader-name trader-name-sm">ごとう しゅん</div>
+            <div class="trader-meta">FX歴 4ヶ月</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val-sm" style="color:#7a8499">+3%</div><div class="stat-lbl">月利</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#7a8499">47%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#7a8499">1.4</div><div class="stat-lbl">PF</div></div>
+        </div>
+      </div>
+
+      <div class="card card-karman">
+        <span class="rank-badge badge-karman"><span class="badge-dot"></span>Karman</span>
+        <div class="card-header">
+          <div class="avatar av-sm av-karman">YA</div>
+          <div class="card-header-info">
+            <div class="trader-name trader-name-sm">やまぐち あや</div>
+            <div class="trader-meta">FX歴 3ヶ月</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val-sm" style="color:#7a8499">+3%</div><div class="stat-lbl">月利</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#7a8499">47%</div><div class="stat-lbl">勝率</div></div>
+          <div class="stat-box"><div class="stat-val-sm" style="color:#7a8499">1.4</div><div class="stat-lbl">PF</div></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div><!-- /page -->
+
+<script>
+/* Stars */
+const starsEl = document.getElementById('stars');
+for (let i = 0; i < 180; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  const sz = Math.random() * 1.8 + 0.4;
+  s.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*5}s;animation-duration:${2+Math.random()*4}s;opacity:${Math.random()*0.3+0.1}`;
+  starsEl.appendChild(s);
+}
+</script>
+
+</body>
+</html>
